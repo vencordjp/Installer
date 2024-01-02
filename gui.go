@@ -12,11 +12,12 @@ import (
 	"bytes"
 	_ "embed"
 	"errors"
-	g "github.com/AllenDang/giu"
-	"github.com/AllenDang/imgui-go"
 	"image"
 	"image/color"
 	"vencordinstaller/buildinfo"
+
+	"github.com/AllenDang/imgui-go"
+
 	// png decoder for icon
 	_ "image/png"
 	"os"
@@ -72,7 +73,7 @@ func main() {
 		g.Update()
 	}()
 
-	win = g.NewMasterWindow("Vencord Installer", 1200, 800, 0)
+	win = g.NewMasterWindow("VencordJP のインストール", 1200, 800, 0)
 
 	icon, _, err := image.Decode(bytes.NewReader(iconBytes))
 	if err != nil {
@@ -118,7 +119,7 @@ func InstallLatestBuilds() (err error) {
 
 	err = installLatestBuilds()
 	if err != nil {
-		ShowModal("Uh Oh!", "Failed to install the latest Vencord builds from GitHub:\n"+err.Error())
+		ShowModal("おっと。エラーが発生したようです。", "GitHubからVencordJPの最新ビルドをインストールできませんでした。詳細\n"+err.Error())
 	}
 	return
 }
@@ -171,7 +172,7 @@ func handleErr(di *DiscordInstall, err error, action string) {
 	if errors.Is(err, os.ErrPermission) {
 		switch runtime.GOOS {
 		case "windows":
-			err = errors.New("Permission denied. Make sure your Discord is fully closed (from the tray)!")
+			err = errors.New("権限がありません。(Permission denied)、Discordが完全に終了されていることを確認してください。(トレイからも)")
 		case "darwin":
 			// FIXME: This text is not selectable which is a bit mehhh
 			command := "sudo chown -R \"${USER}:wheel\" " + di.path
@@ -329,13 +330,13 @@ func RawInfoModal(id, title, description string, isOpenAsar bool) g.Widget {
 						&CondWidget{isOpenAsar,
 							func() g.Widget {
 								return g.Row(
-									g.Button("Accept").
+									g.Button("承諾").
 										OnClick(func() {
 											acceptedOpenAsar = true
 											g.CloseCurrentPopup()
 										}).
 										Size(100, 30),
-									g.Button("Cancel").
+									g.Button("キャンセル").
 										OnClick(func() {
 											g.CloseCurrentPopup()
 										}).
@@ -343,7 +344,7 @@ func RawInfoModal(id, title, description string, isOpenAsar bool) g.Widget {
 								)
 							},
 							func() g.Widget {
-								return g.Button("Ok").
+								return g.Button("OK").
 									OnClick(func() {
 										g.CloseCurrentPopup()
 									}).
@@ -439,8 +440,8 @@ func renderInstaller() g.Widget {
 		g.Style().SetFontSize(20).To(
 			renderErrorCard(
 				DiscordYellow,
-				"**Github** and **vencord.dev** are the only official places to get Vencord. Any other site claiming to be us is malicious.\n"+
-					"If you downloaded from any other source, you should delete / uninstall everything immediately, run a malware scan and change your Discord password.",
+				"**GitHub**が安全なVencordJPの入手先です。それ以外のサイトは、悪質なファイルである可能性があります。\n"+
+					"ほかのソースからダウンロードした場合は、Discordを削除/アンインストールし、Discordのパスワードを変更し、マルウェアスキャンを実行してください。",
 				90,
 			),
 		),
@@ -448,11 +449,11 @@ func renderInstaller() g.Widget {
 		g.Dummy(0, 5),
 
 		g.Style().SetFontSize(30).To(
-			g.Label("Please select an install to patch"),
+			g.Label("パッチ先のインストールを選択"),
 		),
 
 		&CondWidget{len(discords) == 0, func() g.Widget {
-			return g.Label("No Discord installs found. You first need to install Discord.")
+			return g.Label("Discordのインストールが見つかりませんでした。Discordを最初にインストールしてください。")
 		}, nil},
 
 		g.Style().SetFontSize(20).To(
@@ -461,13 +462,13 @@ func renderInstaller() g.Widget {
 				//goland:noinspection GoDeprecation
 				text := strings.Title(d.branch) + " - " + d.path
 				if d.isPatched {
-					text += " [PATCHED]"
+					text += " [パッチ済み]"
 				}
 				return g.RadioButton(text, radioIdx == i).
 					OnChange(makeRadioOnChange(i))
 			}),
 
-			g.RadioButton("Custom Install Location", radioIdx == customChoiceIdx).
+			g.RadioButton("カスタムのインストール場所", radioIdx == customChoiceIdx).
 				OnChange(makeRadioOnChange(customChoiceIdx)),
 		),
 
@@ -476,7 +477,7 @@ func renderInstaller() g.Widget {
 			SetStyle(g.StyleVarFramePadding, 16, 16).
 			SetFontSize(20).
 			To(
-				g.InputText(&customDir).Hint("The custom location").
+				g.InputText(&customDir).Hint("カスタムの場所").
 					Size(w - 16).
 					Flags(g.InputTextFlagsCallbackCompletion).
 					OnChange(onCustomInputChanged).
@@ -526,16 +527,16 @@ func renderInstaller() g.Widget {
 					SetColor(g.StyleColorButton, DiscordGreen).
 					SetDisabled(GithubError != nil).
 					To(
-						g.Button("Install").
+						g.Button("インストール").
 							OnClick(handlePatch).
 							Size((w-40)/4, 50),
-						Tooltip("Patch the selected Discord Install"),
+						Tooltip("選択したDiscordのインストールをパッチします。"),
 					),
 				g.Style().
 					SetColor(g.StyleColorButton, DiscordBlue).
 					SetDisabled(GithubError != nil).
 					To(
-						g.Button("Reinstall / Repair").
+						g.Button("再インストールと修復").
 							OnClick(func() {
 								if IsDevInstall {
 									handlePatch()
@@ -547,44 +548,44 @@ func renderInstaller() g.Widget {
 								}
 							}).
 							Size((w-40)/4, 50),
-						Tooltip("Reinstall & Update Vencord"),
+						Tooltip("VencordJPを再インストールし、更新します。"),
 					),
 				g.Style().
 					SetColor(g.StyleColorButton, DiscordRed).
 					To(
-						g.Button("Uninstall").
+						g.Button("アンインストール").
 							OnClick(handleUnpatch).
 							Size((w-40)/4, 50),
-						Tooltip("Unpatch the selected Discord Install"),
+						Tooltip("選択したDiscordのインストールからVencordJPをアンインストールします。"),
 					),
 				g.Style().
 					SetColor(g.StyleColorButton, Ternary(isOpenAsar, DiscordRed, DiscordGreen)).
 					To(
-						g.Button(Ternary(isOpenAsar, "Uninstall OpenAsar", Ternary(currentDiscord != nil, "Install OpenAsar", "(Un-)Install OpenAsar"))).
+						g.Button(Ternary(isOpenAsar, "OpenAsarをアンインストール", Ternary(currentDiscord != nil, "OpenAsarをインストール", "OpenAsarを(アン)インストール"))).
 							OnClick(handleOpenAsar).
 							Size((w-40)/4, 50),
-						Tooltip("Manage OpenAsar"),
+						Tooltip("OpenAsarを管理"),
 					),
 			),
 		),
 
-		InfoModal("#patched", "Successfully Patched", "If Discord is still open, fully close it first.\n"+
-			"Then, start it and verify Vencord installed successfully by looking for its category in Discord Settings"),
-		InfoModal("#unpatched", "Successfully Unpatched", "If Discord is still open, fully close it first. Then start it again, it should be back to stock!"),
-		InfoModal("#scuffed-install", "Hold On!", "You have a broken Discord Install.\n"+
-			"Sometimes Discord decides to install to the wrong location for some reason!\n"+
-			"You need to fix this before patching, otherwise Vencord will likely not work.\n\n"+
-			"Use the below button to jump there and delete any folder called Discord or Squirrel.\n"+
-			"If the folder is now empty, feel free to go back a step and delete that folder too.\n"+
-			"Then see if Discord still starts. If not, reinstall it"),
-		RawInfoModal("#openasar-confirm", "OpenAsar", "OpenAsar is an open-source alternative of Discord desktop's app.asar.\n"+
-			"Vencord is in no way affiliated with OpenAsar.\n"+
-			"You're installing OpenAsar at your own risk. If you run into issues with OpenAsar,\n"+
-			"no support will be provided, join the OpenAsar Server instead!\n\n"+
-			"To install OpenAsar, press Accept and click 'Install OpenAsar' again.", true),
-		InfoModal("#openasar-patched", "Successfully Installed OpenAsar", "If Discord is still open, fully close it first. Then start it again and verify OpenAsar installed successfully!"),
-		InfoModal("#openasar-unpatched", "Successfully Uninstalled OpenAsar", "If Discord is still open, fully close it first. Then start it again and it should be back to stock!"),
-		InfoModal("#invalid-custom-location", "Invalid Location", "The specified location is not a valid Discord install. Make sure you select the base folder."),
+		InfoModal("#patched", "正常にインストールされました", "Discordがまだ開いている場合、Discordを閉じてください。\n"+
+			"Discordを起動したら、Discordの設定にVencordのカテゴリが存在することを確認してください。"),
+		InfoModal("#unpatched", "正常にアンインストールされました", "Discordがまだ開いている場合、Discordを閉じてください。"),
+		InfoModal("#scuffed-install", "確認してください", "あなたは壊れているDiscordのインストールを所持しています:\n"+
+			"Discordが何らかの理由で間違った場所にインストールすることがあります。\n"+
+			"パッチを当てる前にこれを修正しなければ、VencordJPは機能しない可能性が高いです。\n\n"+
+			"下のボタンを使ってそこにジャンプし、DiscordまたはSquirrelと呼ばれるフォルダを削除してください。\n"+
+			"フォルダが空になった場合は、戻ってそのフォルダも削除してください。\n"+
+			"その後、Discordが起動するか確認してください。起動しない場合は、再インストールしてください。"),
+		RawInfoModal("#openasar-confirm", "OpenAsar", "OpenAsarは、Discordデスクトップのapp.asarに代わるオープンソースのapp.asarです。\n"+
+			"Vencord及びVencordJPはOpenAsarとは一切関係ありません。\n"+
+			"OpenAsarのインストールは自己責任で行ってください。もし、OpenAsarで問題が発生した場合、\n"+
+			"OpenAsarのサーバーに参加してください。\n\n"+
+			"OpenAsarをインストールするには、承諾を押し、もう一度「OpenAsarをインストール」をクリックします。", true),
+		InfoModal("#openasar-patched", "正常にOpenAsarをインストールしました", "Discordがまだ開いている場合、Discordを閉じてください。\nDiscordの設定にOpenAsarが存在することを確認してください。"),
+		InfoModal("#openasar-unpatched", "正常にOpenAsarをアンインストールしました", "Discordがまだ開いている場合、Discordを閉じてください。"),
+		InfoModal("#invalid-custom-location", "無効な場所", "指定した場所に有効なDiscordのインストールが見つかりませんでした。パスを確認してください。"),
 		InfoModal("#modal"+strconv.Itoa(modalId), modalTitle, modalMessage),
 
 		UpdateModal(),
@@ -631,14 +632,14 @@ func loop() {
 		Layout(
 			g.Align(g.AlignCenter).To(
 				g.Style().SetFontSize(40).To(
-					g.Label("Vencord Installer"),
+					g.Label("VencordJP インストーラー"),
 				),
 			),
 
 			g.Dummy(0, 20),
 			g.Style().SetFontSize(20).To(
 				g.Row(
-					g.Label(Ternary(IsDevInstall, "Dev Install: ", "Files will be downloaded to: ")+FilesDir),
+					g.Label(Ternary(IsDevInstall, "開発インストール: ", "ファイルはここへダウンロードされます: ")+FilesDir),
 					g.Style().
 						SetColor(g.StyleColorButton, DiscordBlue).
 						SetStyle(g.StyleVarFramePadding, 4, 4).
@@ -649,20 +650,20 @@ func loop() {
 						),
 				),
 				&CondWidget{!IsDevInstall, func() g.Widget {
-					return g.Label("To customise this location, set the environment variable 'VENCORD_USER_DATA_DIR' and restart me").Wrapped(true)
+					return g.Label("インストール場所をカスタマイズするには、環境変数「VENCORD_USER_DATA_DIR」をパスにしてインストーラーを再起動してください。").Wrapped(true)
 				}, nil},
 				g.Dummy(0, 10),
-				g.Label("Installer Version: "+buildinfo.InstallerTag+" ("+buildinfo.InstallerGitHash+")"+Ternary(IsSelfOutdated, " - OUTDATED", "")),
-				g.Label("Local Vencord Version: "+InstalledHash),
+				g.Label("インストーラーバージョン: "+buildinfo.InstallerTag+" ("+buildinfo.InstallerGitHash+")"+Ternary(IsSelfOutdated, " - 古い", "")),
+				g.Label("ローカルのVencordJPバージョン: "+InstalledHash),
 				&CondWidget{
 					GithubError == nil,
 					func() g.Widget {
 						if IsDevInstall {
-							return g.Label("Not updating Vencord due to being in DevMode")
+							return g.Label("VencordJPは開発者モードのため、アップデートされません。")
 						}
-						return g.Label("Latest Vencord Version: " + LatestHash)
+						return g.Label("最新のVencordJPバージョン: " + LatestHash)
 					}, func() g.Widget {
-						return renderErrorCard(DiscordRed, "Failed to fetch Info from GitHub: "+GithubError.Error(), 40)
+						return renderErrorCard(DiscordRed, "ハッシュをGitHubから取得できませんでした。詳細: "+GithubError.Error(), 40)
 					},
 				},
 			),
