@@ -1,7 +1,10 @@
 # Based partially on Alyxia's work, thanks so much!
 
 name: Release
-on: push
+on:
+  push:
+    tags:
+      - v*
 
 env:
   FORCE_COLOR: true

@@ -11,12 +11,12 @@ import (
 	"vencordinstaller/buildinfo"
 )
 
-const ReleaseUrl = "https://api.github.com/repos/Vencord/VencordJP/releases/latest"
-const ReleaseUrlFallback = ""
-const InstallerReleaseUrl = "https://api.github.com/repos/VencordJP/Installer/releases/latest"
-const InstallerReleaseUrlFallback = ""
+const ReleaseUrl = "https://api.github.com/repos/VencordJP/Vencord/releases/latest"
+const ReleaseUrlFallback = "https://vencord.dev/releases/vencord"
+const InstallerReleaseUrl = "https://api.github.com/repos/Vencord/Installer/releases/latest"
+const InstallerReleaseUrlFallback = "https://vencord.dev/releases/installer"
 
-var UserAgent = "VencordJPInstaller/" + buildinfo.InstallerGitHash + " (https://github.com/vencordjp/Installer)"
+var UserAgent = "VencordInstaller/" + buildinfo.InstallerGitHash + " (https://github.com/Vencord/Installer)"
 
 var (
 	DiscordGreen  = color.RGBA{R: 0x2D, G: 0x7C, B: 0x46, A: 0xFF}

@@ -33,7 +33,7 @@ var ReleaseData GithubRelease
 var GithubError error
 var GithubDoneChan chan bool
 
-var InstalledHash = "None"
+var InstalledHash = "v1.0.0"
 var LatestHash = "Unknown"
 var IsDevInstall bool
 

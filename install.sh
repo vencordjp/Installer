@@ -30,7 +30,7 @@ chmod +x "$outfile"
 echo
 echo "Now running VencordInstaller"
 echo "Do you want to run as root? [Y|n]"
-echo "This is necessary if Discord is in a roowt owned location like /usr/share or /opt"
+echo "This is necessary if Discord is in a root owned location like /usr/share or /opt"
 printf "> "
 read -r runAsRoot
 
