@@ -15,7 +15,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
 	"os"
-	"slices"
+	"runtime"
 	"strings"
 	"vencordinstaller/buildinfo"
 )
@@ -94,7 +94,7 @@ func main() {
 
 	install, uninstall, update, installOpenAsar, uninstallOpenAsar := *installFlag, *uninstallFlag, *updateFlag, *installOpenAsarFlag, *uninstallOpenAsarFlag
 	switches := []*bool{&install, &update, &uninstall, &installOpenAsar, &uninstallOpenAsar}
-	if !slices.ContainsFunc(switches, func(b *bool) bool { return *b }) {
+	if !SliceContainsFunc(switches, func(b *bool) bool { return *b }) {
 		go func() {
 			<-SelfUpdateCheckDoneChan
 			if IsSelfOutdated {
@@ -133,7 +133,7 @@ func main() {
 			exitSuccess()
 		}
 
-		*switches[slices.Index(choices, choice)] = true
+		*switches[SliceIndex(choices, choice)] = true
 	}
 
 	var err error
@@ -176,19 +176,28 @@ func main() {
 	exitSuccess()
 }
 
+func exit(status int) {
+	if runtime.GOOS == "windows" && IsDoubleClickRun() {
+		fmt.Print("Press Enter to exit")
+		var b byte
+		_, _ = fmt.Scanf("%v", &b)
+	}
+	os.Exit(status)
+}
+
 func exitSuccess() {
 	color.HiGreen("✔ Success!")
-	os.Exit(0)
+	exit(0)
 }
 
 func exitFailure() {
 	color.HiRed("❌ Failed!")
-	os.Exit(1)
+	exit(1)
 }
 
 func handlePromptError(err error) {
 	if errors.Is(err, promptui.ErrInterrupt) {
-		os.Exit(0)
+		exit(0)
 	}
 
 	Log.FatalIfErr(err)
@@ -204,7 +213,7 @@ func PromptDiscord(action, dir, branch string) *DiscordInstall {
 				}
 			}
 		}
-		die("No Discord install found. Try manually specifying it with the --dir flag")
+		die("No Discord install found. Try manually specifying it with the --dir flag. Hint: snap is not supported")
 	}
 
 	if branch != "" {
@@ -221,7 +230,7 @@ func PromptDiscord(action, dir, branch string) *DiscordInstall {
 		if discord := ParseDiscord(dir, branch); discord != nil {
 			return discord
 		} else {
-			die(dir + " is not a valid Discord install")
+			die(dir + " is not a valid Discord install. Hint: snap is not supported")
 		}
 	}
 
@@ -239,7 +248,7 @@ func PromptDiscord(action, dir, branch string) *DiscordInstall {
 	handlePromptError(err)
 
 	if choice != "Custom Location" {
-		return discords[slices.Index(items, choice)].(*DiscordInstall)
+		return discords[SliceIndex(items, choice)].(*DiscordInstall)
 	}
 
 	for {

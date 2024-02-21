@@ -454,7 +454,11 @@ func renderInstaller() g.Widget {
 		),
 
 		&CondWidget{len(discords) == 0, func() g.Widget {
-			return g.Label("Discordのインストールが見つかりませんでした。Discordをインストールしてから続行してください。")
+			s := "No Discord installs found. You first need to install Discord."
+			if runtime.GOOS == "linux" {
+				s += " snap is not supported."
+			}
+			return g.Label(s)
 		}, nil},
 
 		g.Style().SetFontSize(20).To(
@@ -570,23 +574,23 @@ func renderInstaller() g.Widget {
 			),
 		),
 
-		InfoModal("#patched", "パッチに成功", "Discordがまだ開いている場合、閉じてください。\n"+
-			"Discordを起動した後は、Discordの設定にVencordのカテゴリが存在することを確認してください。"),
-		InfoModal("#unpatched", "アンパッチに成功", "Discordがまだ開いている場合、閉じてください。"),
-		InfoModal("#scuffed-install", "アラート", "Discordのインストールは壊れています。\n"+
-			"Discordのインストーラーが違う場所にインストールする可能性があります。\n"+
-			"この問題を修正しない場合、Vencordは正常に動作しない場合があります。\n\n"+
-			"下のボタンを使用し、「Discord」と「Squirrel」フォルダを削除してください。\n"+
-			"フォルダの内容がなくなったら、戻ってフォルダの削除を続けてください。\n"+
-			"Discordが開かない場合は、再インストールしてください。"),
-		RawInfoModal("#openasar-confirm", "OpenAsar", "OpenAsarはDiscordデスクトップのapp.asarのオープンソースの代替です。\n"+
-			"Vencord・VencordJPはOpenAsarとは関係ありません。\n"+
-			"OpenAsarは自己責任でインストールしてください。OpenAsarで問題が発生しても、\n"+
-			"Vencordのサポートはありません。OpenAsarのサーバーでサポートを受けてください。\n\n"+
-			"OpenAsarをインストールするには、承諾をクリックしてもう一度「OpenAsarをインストール」をクリックします。", true),
-		InfoModal("#openasar-patched", "OpenAsarをインストールしました", "Discordがまだ開いている場合、閉じてください。Discordを起動して、OpenAsarがインストールされていることを確認してください。"),
-		InfoModal("#openasar-unpatched", "OpenAsarをアンインストールしました", "Discordがまだ開いている場合、閉じてください。"),
-		InfoModal("#invalid-custom-location", "無効な場所", "指定した場所には正しいDiscordのインストールは見つかりませんでした。パスを確認してください。"),
+		InfoModal("#patched", "Successfully Patched", "If Discord is still open, fully close it first.\n"+
+			"Then, start it and verify Vencord installed successfully by looking for its category in Discord Settings"),
+		InfoModal("#unpatched", "Successfully Unpatched", "If Discord is still open, fully close it first. Then start it again, it should be back to stock!"),
+		InfoModal("#scuffed-install", "Hold On!", "You have a broken Discord Install.\n"+
+			"Sometimes Discord decides to install to the wrong location for some reason!\n"+
+			"You need to fix this before patching, otherwise Vencord will likely not work.\n\n"+
+			"Use the below button to jump there and delete any folder called Discord or Squirrel.\n"+
+			"If the folder is now empty, feel free to go back a step and delete that folder too.\n"+
+			"Then see if Discord still starts. If not, reinstall it"),
+		RawInfoModal("#openasar-confirm", "OpenAsar", "OpenAsar is an open-source alternative of Discord desktop's app.asar.\n"+
+			"Vencord is in no way affiliated with OpenAsar.\n"+
+			"You're installing OpenAsar at your own risk. If you run into issues with OpenAsar,\n"+
+			"no support will be provided, join the OpenAsar Server instead!\n\n"+
+			"To install OpenAsar, press Accept and click 'Install OpenAsar' again.", true),
+		InfoModal("#openasar-patched", "Successfully Installed OpenAsar", "If Discord is still open, fully close it first. Then start it again and verify OpenAsar installed successfully!"),
+		InfoModal("#openasar-unpatched", "Successfully Uninstalled OpenAsar", "If Discord is still open, fully close it first. Then start it again and it should be back to stock!"),
+		InfoModal("#invalid-custom-location", "Invalid Location", "The specified location is not a valid Discord install. Make sure you select the base folder."),
 		InfoModal("#modal"+strconv.Itoa(modalId), modalTitle, modalMessage),
 
 		UpdateModal(),
