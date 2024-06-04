@@ -441,7 +441,7 @@ func renderInstaller() g.Widget {
 		g.Style().SetFontSize(20).To(
 			renderErrorCard(
 				DiscordYellow,
-				"GitHub及びuplauncher.xyzが安全なVencordJPのダウンロード場所です。.\n"+
+				"GitHub及びraic.techが安全なVencordJPのダウンロード場所です。.\n"+
 					"それ以外のソースからダウンロードした場合は、今すぐDiscordをアンインストールし、ウイルススキャンを実行してDiscordのパスワードを変更してください。",
 				90,
 			),
@@ -454,7 +454,7 @@ func renderInstaller() g.Widget {
 		),
 
 		&CondWidget{len(discords) == 0, func() g.Widget {
-			s := "No Discord installs found. You first need to install Discord."
+			s := "Discordのインストールが見つかりませんでした。Discordをインストールしてから続行してください。"
 			if runtime.GOOS == "linux" {
 				s += " snap is not supported."
 			}
@@ -482,7 +482,7 @@ func renderInstaller() g.Widget {
 			SetStyle(g.StyleVarFramePadding, 16, 16).
 			SetFontSize(20).
 			To(
-				g.InputText(&customDir).Hint("The custom location").
+				g.InputText(&customDir).Hint("カスタムの場所を選択").
 					Size(w - 16).
 					Flags(g.InputTextFlagsCallbackCompletion).
 					OnChange(onCustomInputChanged).
@@ -574,23 +574,22 @@ func renderInstaller() g.Widget {
 			),
 		),
 
-		InfoModal("#patched", "Successfully Patched", "If Discord is still open, fully close it first.\n"+
-			"Then, start it and verify Vencord installed successfully by looking for its category in Discord Settings"),
-		InfoModal("#unpatched", "Successfully Unpatched", "If Discord is still open, fully close it first. Then start it again, it should be back to stock!"),
-		InfoModal("#scuffed-install", "Hold On!", "You have a broken Discord Install.\n"+
-			"Sometimes Discord decides to install to the wrong location for some reason!\n"+
-			"You need to fix this before patching, otherwise Vencord will likely not work.\n\n"+
-			"Use the below button to jump there and delete any folder called Discord or Squirrel.\n"+
-			"If the folder is now empty, feel free to go back a step and delete that folder too.\n"+
-			"Then see if Discord still starts. If not, reinstall it"),
-		RawInfoModal("#openasar-confirm", "OpenAsar", "OpenAsar is an open-source alternative of Discord desktop's app.asar.\n"+
-			"Vencord is in no way affiliated with OpenAsar.\n"+
-			"You're installing OpenAsar at your own risk. If you run into issues with OpenAsar,\n"+
-			"no support will be provided, join the OpenAsar Server instead!\n\n"+
-			"To install OpenAsar, press Accept and click 'Install OpenAsar' again.", true),
-		InfoModal("#openasar-patched", "Successfully Installed OpenAsar", "If Discord is still open, fully close it first. Then start it again and verify OpenAsar installed successfully!"),
-		InfoModal("#openasar-unpatched", "Successfully Uninstalled OpenAsar", "If Discord is still open, fully close it first. Then start it again and it should be back to stock!"),
-		InfoModal("#invalid-custom-location", "Invalid Location", "The specified location is not a valid Discord install. Make sure you select the base folder."),
+		InfoModal("#patched", "パッチ適用に成功しました", "Discordがまだ開いている場合は、完全に閉じてください。\n"+
+		"その後、Discordを再起動し、Discord設定にVencordのカテゴリが表示されているか確認してください"),
+	InfoModal("#unpatched", "パッチ解除に成功しました", "Discordがまだ開いている場合は、完全に閉じてください。その後、再起動すると元の状態に戻るはずです！"),
+	InfoModal("#scuffed-install", "ちょっと待ってください！", "壊れたDiscordインストールがあります。\n"+
+		"Discordが理由もなく間違った場所にインストールされることがあります！\n"+
+		"パッチを適用する前にこれを修正する必要があります。さもないと、Vencordが正しく動作しない可能性があります。\n\n"+
+		"以下のボタンを使ってその場所に移動し、DiscordまたはSquirrelというフォルダを削除してください。\n"+
+		"フォルダが空になった場合は、前のステップに戻ってそのフォルダも削除してください。\n"+
+		"その後、Discordがまだ起動するか確認してください。起動しない場合は、再インストールしてください"),
+	RawInfoModal("#openasar-confirm", "OpenAsar", "OpenAsarは、Discordデスクトップのapp.asarのオープンソースの代替品です。\n"+
+		"VencordはOpenAsarと一切関係がありません。\n"+
+		"OpenAsarをインストールするのは自己責任で行ってください。OpenAsarで問題が発生した場合、\n"+
+		"サポートは提供されません。")	
+		InfoModal("#openasar-patched", "OpenAsarのインストールに成功しました", "Discordがまだ開いている場合は、完全に閉じてください。その後、再起動し、OpenAsarが正常にインストールされたことを確認してください！"),
+		InfoModal("#openasar-unpatched", "OpenAsarのアンインストールに成功しました", "Discordがまだ開いている場合は、完全に閉じてください。その後、再起動すると元の状態に戻るはずです！"),
+		InfoModal("#invalid-custom-location", "無効な場所", "指定された場所は有効なDiscordインストールではありません。ベースフォルダを選択していることを確認してください。"),		
 		InfoModal("#modal"+strconv.Itoa(modalId), modalTitle, modalMessage),
 
 		UpdateModal(),
@@ -649,7 +648,7 @@ func loop() {
 						SetColor(g.StyleColorButton, DiscordBlue).
 						SetStyle(g.StyleVarFramePadding, 4, 4).
 						To(
-							g.Button("Open Directory").OnClick(func() {
+							g.Button("ディレクトリを開く").OnClick(func() {
 								g.OpenURL("file://" + FilesDir)
 							}),
 						),
