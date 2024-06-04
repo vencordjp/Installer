@@ -575,21 +575,21 @@ func renderInstaller() g.Widget {
 		),
 
 		InfoModal("#patched", "パッチ適用に成功しました", "Discordがまだ開いている場合は、完全に閉じてください。\n"+
-		"その後、Discordを再起動し、Discord設定にVencordのカテゴリが表示されているか確認してください"),
-	InfoModal("#unpatched", "パッチ解除に成功しました", "Discordがまだ開いている場合は、完全に閉じてください。その後、再起動すると元の状態に戻るはずです！"),
-	InfoModal("#scuffed-install", "ちょっと待ってください！", "壊れたDiscordインストールがあります。\n"+
-		"Discordが理由もなく間違った場所にインストールされることがあります！\n"+
-		"パッチを適用する前にこれを修正する必要があります。さもないと、Vencordが正しく動作しない可能性があります。\n\n"+
-		"以下のボタンを使ってその場所に移動し、DiscordまたはSquirrelというフォルダを削除してください。\n"+
-		"フォルダが空になった場合は、前のステップに戻ってそのフォルダも削除してください。\n"+
-		"その後、Discordがまだ起動するか確認してください。起動しない場合は、再インストールしてください"),
-	RawInfoModal("#openasar-confirm", "OpenAsar", "OpenAsarは、Discordデスクトップのapp.asarのオープンソースの代替品です。\n"+
-		"VencordはOpenAsarと一切関係がありません。\n"+
-		"OpenAsarをインストールするのは自己責任で行ってください。OpenAsarで問題が発生した場合、\n"+
-		"サポートは提供されません。")	
+			"その後、Discordを再起動し、Discord設定にVencordのカテゴリが表示されているか確認してください"),
+		InfoModal("#unpatched", "パッチ解除に成功しました", "Discordがまだ開いている場合は、完全に閉じてください。その後、再起動すると元の状態に戻るはずです！"),
+		InfoModal("#scuffed-install", "ちょっと待ってください！", "壊れたDiscordインストールがあります。\n"+
+			"Discordが理由もなく間違った場所にインストールされることがあります！\n"+
+			"パッチを適用する前にこれを修正する必要があります。さもないと、Vencordが正しく動作しない可能性があります。\n\n"+
+			"以下のボタンを使ってその場所に移動し、DiscordまたはSquirrelというフォルダを削除してください。\n"+
+			"フォルダが空になった場合は、前のステップに戻ってそのフォルダも削除してください。\n"+
+			"その後、Discordがまだ起動するか確認してください。起動しない場合は、再インストールしてください"),
+		RawInfoModal("#openasar-confirm", "OpenAsar", "OpenAsarは、Discordデスクトップのapp.asarのオープンソースの代替品です。\n"+
+			"VencordはOpenAsarと一切関係がありません。\n"+
+			"OpenAsarをインストールするのは自己責任で行ってください。OpenAsarで問題が発生した場合、\n"+
+			"サポートは提供されません。", true),
 		InfoModal("#openasar-patched", "OpenAsarのインストールに成功しました", "Discordがまだ開いている場合は、完全に閉じてください。その後、再起動し、OpenAsarが正常にインストールされたことを確認してください！"),
 		InfoModal("#openasar-unpatched", "OpenAsarのアンインストールに成功しました", "Discordがまだ開いている場合は、完全に閉じてください。その後、再起動すると元の状態に戻るはずです！"),
-		InfoModal("#invalid-custom-location", "無効な場所", "指定された場所は有効なDiscordインストールではありません。ベースフォルダを選択していることを確認してください。"),		
+		InfoModal("#invalid-custom-location", "無効な場所", "指定された場所は有効なDiscordインストールではありません。ベースフォルダを選択していることを確認してください。"),
 		InfoModal("#modal"+strconv.Itoa(modalId), modalTitle, modalMessage),
 
 		UpdateModal(),
